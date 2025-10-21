@@ -1,1 +1,0 @@
-Python automation script + GUI to organize files by type
