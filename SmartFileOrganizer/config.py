@@ -3,7 +3,7 @@ CATEGORIES = {
     "Images": [".jpg", ".jpeg", ".png", ".gif", ".bmp"],
     "Videos": [".mp4", ".mkv", ".avi", ".mov"],
     "Music": [".mp3", ".wav", ".flac"],
-    "Scripts": [".py", ".js", ".java", ".cpp"]
+    "Scripts": [".py", ".js", ".java", ".cpp", ".html", ".css"]
 }
 
 DEFAULT_CATEGORY = "Others"
