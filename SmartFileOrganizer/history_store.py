@@ -5,7 +5,6 @@ from datetime import datetime
 HISTORY_FILE = "history.json"
 
 def save_history(run_id, moves_list):
-    """Append a run’s moves to the history file."""
     history = []
 
     if os.path.exists(HISTORY_FILE):
@@ -28,7 +27,6 @@ def save_history(run_id, moves_list):
         json.dump(history, f, indent=4)
 
 def load_last_history():
-    """Return the last run’s data, or None if no history exists."""
     if not os.path.exists(HISTORY_FILE):
         return None
 
@@ -37,7 +35,6 @@ def load_last_history():
             history = json.load(f)
             if not history:
                 return None
-            # Return last run that hasn’t been undone
             for run_entry in reversed(history):
                 if not run_entry.get("undone", False):
                     return run_entry
@@ -46,10 +43,9 @@ def load_last_history():
             return None
 
 def undo_last_operation():
-    """Move files back to their original locations."""
     last_run = load_last_history()
     if not last_run:
-        print("⚠️ No history available to undo.")
+        print("No history available to undo.")
         return False
 
     moves = last_run["moves"]
@@ -64,10 +60,10 @@ def undo_last_operation():
                 os.makedirs(os.path.dirname(dest), exist_ok=True)
                 os.rename(src, dest)
             except Exception as e:
-                print(f"❌ Failed to undo {src} → {dest}: {e}")
+                print(f"Failed to undo {src} → {dest}: {e}")
                 errors += 1
 
-    # Mark this run as undone
+    # Mark run as undone
     with open(HISTORY_FILE, "r+", encoding="utf-8") as f:
         history = json.load(f)
         for run_entry in history:

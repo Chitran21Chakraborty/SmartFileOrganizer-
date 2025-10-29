@@ -1,9 +1,10 @@
 CATEGORIES = {
-    "Documents": [".pdf", ".docx", ".txt", ".xlsx", ".csv", ".pptx"],
+    "Documents": [".pdf", ".docx", ".txt", ".xlsx", ".pptx"],
     "Images": [".jpg", ".jpeg", ".png", ".gif", ".bmp"],
     "Videos": [".mp4", ".mkv", ".avi", ".mov"],
-    "Music": [".mp3", ".wav", ".flac"],
-    "Scripts": [".py", ".js", ".java", ".cpp", ".html", ".css"]
+    "Audio": [".mp3", ".wav", ".aac"],
+    "Archives": [".zip", ".rar", ".tar", ".gz"],
+    "Code": [".py", ".java", ".c", ".cpp", ".js", ".html", ".css"]
 }
 
 DEFAULT_CATEGORY = "Others"

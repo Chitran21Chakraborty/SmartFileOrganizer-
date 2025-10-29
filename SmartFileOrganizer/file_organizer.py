@@ -2,113 +2,79 @@ import os
 import shutil
 import logging
 from datetime import datetime
+import uuid
 from config import CATEGORIES, DEFAULT_CATEGORY
+from history_store import save_history, undo_last_operation
 
-# Setup logging
-log_folder = "logs"
-os.makedirs(log_folder, exist_ok=True)
-log_file = os.path.join(log_folder, f"organizer_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log")
+#Logging Setup
+LOG_FOLDER = "logs"
+os.makedirs(LOG_FOLDER, exist_ok=True)
+log_file = os.path.join(LOG_FOLDER, f"organizer_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log")
 
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
+    format="%(asctime)s - %(levelname)s - %(message)s",
     handlers=[
         logging.FileHandler(log_file),
         logging.StreamHandler()
     ]
 )
 
+#Category Helper
 def get_category(extension):
-    """Return the folder name for a given file extension."""
+    """Return category name for given file extension."""
     for category, extensions in CATEGORIES.items():
         if extension.lower() in extensions:
             return category
     return DEFAULT_CATEGORY
 
+# Main Logic
 def organize_directory(path):
-    """Scan the given directory and organize files into categorized folders."""
-    if not os.path.exists(path):
-        logging.error(f"Path does not exist: {path}")
-        print("❌ Path does not exist!")
+    """
+    Organizes files in any system folder.
+    Yields dicts for GUI (Streamlit) progress:
+        {"status": ..., "file": ..., "category": ..., "done": i, "total": n}
+    """
+    moved_files = []
+
+    if not os.path.exists(path) or not os.path.isdir(path):
+        yield {"status": "error", "message": f"Invalid path: {path}"}
         return
-    
-    if not os.path.isdir(path):
-        logging.error(f"Path is not a directory: {path}")
-        print("❌ Path is not a directory!")
+
+    files = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
+    total_files = len(files)
+    if total_files == 0:
+        yield {"status": "warning", "message": "No files found to organize."}
         return
-    
-    logging.info(f"Starting organization of: {path}")
-    print(f"\n🚀 Starting SmartFileOrganizer...\n")
-    
-    files_moved = 0
-    files_skipped = 0
-    
-    # Loop through each item in directory
-    for file in os.listdir(path):
+
+    for i, file in enumerate(files):
         file_path = os.path.join(path, file)
-        
-        # Skip folders and log files
-        if os.path.isdir(file_path):
-            continue
-        
-        # Skip log folder files
-        if file_path.startswith(os.path.join(path, "logs")):
-            continue
-        
-        # Find file extension
         _, ext = os.path.splitext(file)
-        
         if not ext:
-            logging.warning(f"Skipped file without extension: {file}")
-            files_skipped += 1
+            yield {"status": "skipped", "file": file, "reason": "No extension", "done": i + 1, "total": total_files}
             continue
-        
+
         category = get_category(ext)
-        
-        # Create destination folder
         category_folder = os.path.join(path, category)
         os.makedirs(category_folder, exist_ok=True)
-        
         destination_path = os.path.join(category_folder, file)
-        
-        # Handle duplicate filenames
+
+        # Handle duplicates
         if os.path.exists(destination_path):
             base_name, extension = os.path.splitext(file)
             counter = 1
             while os.path.exists(destination_path):
-                new_name = f"{base_name}_{counter}{extension}"
-                destination_path = os.path.join(category_folder, new_name)
+                destination_path = os.path.join(category_folder, f"{base_name}_{counter}{extension}")
                 counter += 1
-            logging.info(f"Renamed duplicate: {file} → {os.path.basename(destination_path)}")
-        
-        # Move file
+
         try:
             shutil.move(file_path, destination_path)
-            logging.info(f"Moved: {file} → {category}/")
-            print(f"✅ Moved {file} → {category}/")
-            files_moved += 1
+            moved_files.append({"from": file_path, "to": destination_path})
+            yield {"status": "moved", "file": file, "category": category, "done": i + 1, "total": total_files}
         except Exception as e:
-            logging.error(f"Error moving {file}: {e}")
-            print(f"❌ Error moving {file}: {e}")
-            files_skipped += 1
-    
-    # Summary
-    print(f"\n{'-'*50}")
-    print(f"📊 Organization Complete!")
-    print(f"{'-'*50}")
-    print(f"✅ Files moved: {files_moved}")
-    print(f"⚠️  Files skipped: {files_skipped}")
-    print(f"📝 Log saved: {log_file}")
-    print(f"{'-'*50}\n")
-    
-    logging.info(f"Organization complete. Files moved: {files_moved}, Files skipped: {files_skipped}")
+            yield {"status": "error", "file": file, "message": str(e), "done": i + 1, "total": total_files}
 
-if __name__ == "__main__":
-    print("🗂️  SmartFileOrganizer")
-    target = input("\n📁 Enter folder path to organize: ").strip('"').strip("'")
-    
-    if target:
-        organize_directory(target)
-    else:
-        print("❌ No path provided. Exiting...")
-        logging.warning("No path provided by user")
+    if moved_files:
+        run_id = str(uuid.uuid4())
+        save_history(run_id, moved_files)
+        yield {"status": "done", "moved": len(moved_files), "skipped": total_files - len(moved_files), "run_id": run_id}
