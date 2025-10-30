@@ -17,7 +17,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Enhanced CSS styling with animated glowing cards
+#  CSS styling animated cards
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
@@ -386,14 +386,14 @@ elif st.session_state.current_view == 'organize':
     st.markdown("<div class='content-card'>", unsafe_allow_html=True)
     st.markdown("### 📁 Organize Folder")
     
-    folder_path = st.text_input("📂 Folder Path", placeholder="e.g., C:\\Users\\YourName\\Downloads")
+    folder_path = st.text_input(" Folder Path", placeholder="e.g., C:\\Users\\YourName\\Downloads")
 
     if folder_path and not os.path.exists(folder_path):
-        st.warning("⚠️ Path does not exist!")
+        st.warning(" Path does not exist!")
     elif folder_path and not os.path.isdir(folder_path):
-        st.warning("⚠️ Not a directory!")
+        st.warning(" Not a directory!")
 
-    start_button = st.button("🚀 Start Organization", key="start_org")
+    start_button = st.button(" Start Organization", key="start_org")
 
     if start_button and folder_path and os.path.isdir(folder_path):
         st.session_state.stats = {'moved':0,'skipped':0,'errors':0}
@@ -410,13 +410,13 @@ elif st.session_state.current_view == 'organize':
 
                 status = event["status"]
                 if status=="moved":
-                    log_line = f"✅ Moved {event['file']} → {event['category']}"
+                    log_line = f" Moved {event['file']} → {event['category']}"
                     st.session_state.stats['moved'] +=1
                 elif status=="skipped":
-                    log_line = f"⚠️ Skipped {event['file']} ({event['reason']})"
+                    log_line = f" Skipped {event['file']} ({event['reason']})"
                     st.session_state.stats['skipped'] +=1
                 elif status=="error":
-                    log_line = f"❌ Error {event.get('file','')}: {event.get('message','')}"
+                    log_line = f" Error {event.get('file','')}: {event.get('message','')}"
                     st.session_state.stats['errors'] +=1
                 else:
                     log_line = str(event)
@@ -437,21 +437,21 @@ elif st.session_state.current_view == 'scan':
         st.rerun()
     
     st.markdown("<div class='content-card'>", unsafe_allow_html=True)
-    st.markdown("### 🔍 Deep Folder Scan")
+    st.markdown("### Deep Folder Scan")
     
-    scan_folder = st.text_input("📂 Folder Path to Scan", placeholder="e.g., C:\\Users\\YourName\\Documents")
+    scan_folder = st.text_input(" Folder Path to Scan", placeholder="e.g., C:\\Users\\YourName\\Documents")
 
     if scan_folder and not os.path.exists(scan_folder):
-        st.warning("⚠️ Path does not exist!")
+        st.warning("Path does not exist!")
     elif scan_folder and not os.path.isdir(scan_folder):
-        st.warning("⚠️ Not a directory!")
+        st.warning(" Not a directory!")
 
     col1, col2 = st.columns(2)
     with col1:
-        scan_button = st.button("🔍 Start Scan", key="start_scan", use_container_width=True)
+        scan_button = st.button(" Start Scan", key="start_scan", use_container_width=True)
     with col2:
         if st.session_state.scan_results:
-            export_button = st.button("💾 Export Results", key="export_scan", use_container_width=True)
+            export_button = st.button("Export Results", key="export_scan", use_container_width=True)
 
     if scan_button and scan_folder and os.path.isdir(scan_folder):
         progress_bar = st.progress(0)
@@ -468,7 +468,7 @@ elif st.session_state.current_view == 'scan':
             results = scanner.scan(progress_callback)
             st.session_state.scan_results = results
         
-        st.success(f"✅ Scan completed in {results['scan_time']:.2f} seconds!")
+        st.success(f" Scan completed in {results['scan_time']:.2f} seconds!")
         st.balloons()
     
     # Display results
@@ -476,7 +476,7 @@ elif st.session_state.current_view == 'scan':
         results = st.session_state.scan_results
         
         st.markdown("---")
-        st.markdown("### 📊 Scan Results")
+        st.markdown("### Scan Results")
         
         # Quick Stats
         col1, col2, col3, col4 = st.columns(4)
@@ -484,14 +484,14 @@ elif st.session_state.current_view == 'scan':
             st.markdown(f"""
             <div class='stat-card'>
                 <div class='stat-value'>{results['total_files']:,}</div>
-                <div class='stat-label'>📄 Total Files</div>
+                <div class='stat-label'> Total Files</div>
             </div>
             """, unsafe_allow_html=True)
         with col2:
             st.markdown(f"""
             <div class='stat-card'>
                 <div class='stat-value'>{results['total_folders']:,}</div>
-                <div class='stat-label'>📁 Folders</div>
+                <div class='stat-label'> Folders</div>
             </div>
             """, unsafe_allow_html=True)
         with col3:
@@ -499,87 +499,87 @@ elif st.session_state.current_view == 'scan':
             st.markdown(f"""
             <div class='stat-card'>
                 <div class='stat-value'>{scanner.format_size(results['total_size'])}</div>
-                <div class='stat-label'>💾 Total Size</div>
+                <div class='stat-label'> Total Size</div>
             </div>
             """, unsafe_allow_html=True)
         with col4:
             st.markdown(f"""
             <div class='stat-card'>
                 <div class='stat-value'>{len(results['file_types'])}</div>
-                <div class='stat-label'>📋 File Types</div>
+                <div class='stat-label'> File Types</div>
             </div>
             """, unsafe_allow_html=True)
         
-        # Tabs for different views - REMOVED Overview Tab
-        tab1, tab2, tab3, tab4 = st.tabs(["📁 Largest Files", "🔄 Duplicates", "📅 Timeline", "⚠️ Issues"])
+        # Tabs for different views 
+        tab1, tab2, tab3, tab4 = st.tabs([" Largest Files", " Duplicates", " Timeline", " Issues"])
         
         with tab1:
-            st.markdown("#### 📦 Largest Files")
+            st.markdown("#### Largest Files")
             if results['largest_files']:
                 for idx, file in enumerate(results['largest_files'][:15], 1):
                     st.markdown(f"""
                     <div class='file-item'>
                         <strong>{idx}. {file['name']}</strong><br>
-                        📏 Size: {file['size_formatted']} | 📁 Category: {file['category']}<br>
-                        📍 Path: <code>{file['path']}</code>
+                         Size: {file['size_formatted']} |  Category: {file['category']}<br>
+                         Path: <code>{file['path']}</code>
                     </div>
                     """, unsafe_allow_html=True)
             else:
                 st.info("No files found.")
         
         with tab2:
-            st.markdown("#### 🔄 Potential Duplicates (by size)")
+            st.markdown("#### Potential Duplicates (by size)")
             if results['duplicate_candidates']:
                 st.info(f"Found {len(results['duplicate_candidates'])} groups of files with identical sizes")
                 for idx, dup_group in enumerate(results['duplicate_candidates'][:10], 1):
                     with st.expander(f"Group {idx}: {dup_group['count']} files of {dup_group['size_formatted']}"):
                         for file_path in dup_group['files']:
-                            st.text(f"📄 {file_path}")
+                            st.text(f" {file_path}")
             else:
-                st.success("✅ No duplicate candidates found!")
+                st.success("No duplicate candidates found!")
         
         with tab3:
             col_old, col_new = st.columns(2)
             
             with col_old:
-                st.markdown("#### 🗓️ Oldest Files")
+                st.markdown("#### Oldest Files")
                 if results['oldest_files']:
                     for file in results['oldest_files']:
                         modified_str = file['modified'].strftime('%Y-%m-%d %H:%M:%S')
-                        st.markdown(f"- **{file['name']}**  \n  📅 {modified_str}")
+                        st.markdown(f"- **{file['name']}**  \n  {modified_str}")
                 else:
                     st.info("No files found.")
             
             with col_new:
-                st.markdown("#### 🆕 Newest Files")
+                st.markdown("#### Newest Files")
                 if results['newest_files']:
                     for file in results['newest_files']:
                         modified_str = file['modified'].strftime('%Y-%m-%d %H:%M:%S')
-                        st.markdown(f"- **{file['name']}**  \n  📅 {modified_str}")
+                        st.markdown(f"- **{file['name']}**  \n  {modified_str}")
                 else:
                     st.info("No files found.")
         
         with tab4:
             if results['empty_folders']:
-                st.warning(f"⚠️ Found {len(results['empty_folders'])} empty folders")
+                st.warning(f"Found {len(results['empty_folders'])} empty folders")
                 with st.expander("View empty folders"):
                     for folder in results['empty_folders']:
-                        st.text(f"📂 {folder}")
+                        st.text(f" {folder}")
             else:
-                st.success("✅ No empty folders found!")
+                st.success("No empty folders found!")
             
             if results['hidden_files'] > 0:
-                st.info(f"🔒 Found {results['hidden_files']} hidden files")
+                st.info(f" Found {results['hidden_files']} hidden files")
             else:
-                st.info("🔒 No hidden files found")
+                st.info(" No hidden files found")
             
             if results['errors']:
-                st.error(f"❌ Encountered {len(results['errors'])} errors during scan")
+                st.error(f" Encountered {len(results['errors'])} errors during scan")
                 with st.expander("View errors"):
                     for error in results['errors']:
                         st.text(error)
             else:
-                st.success("✅ No errors encountered!")
+                st.success(" No errors encountered!")
     
     # Export functionality
     if st.session_state.scan_results and 'export_button' in locals() and export_button:
@@ -587,16 +587,16 @@ elif st.session_state.current_view == 'scan':
         scanner.scan_results = st.session_state.scan_results
         success, message = scanner.export_results('scan_results.json')
         if success:
-            st.success(f"✅ Results exported to {message}")
+            st.success(f" Results exported to {message}")
             with open(message, 'r') as f:
                 st.download_button(
-                    label="📥 Download JSON",
+                    label="Download JSON",
                     data=f.read(),
                     file_name="scan_results.json",
                     mime="application/json"
                 )
         else:
-            st.error(f"❌ Export failed: {message}")
+            st.error(f"Export failed: {message}")
     
     st.markdown("</div>", unsafe_allow_html=True)
 
@@ -607,18 +607,18 @@ elif st.session_state.current_view == 'undo':
         st.rerun()
     
     st.markdown("<div class='content-card'>", unsafe_allow_html=True)
-    st.markdown("### ↩️ Undo Last Operation")
+    st.markdown("### ↩ Undo Last Operation")
     st.info("ℹ This will restore all files from the last operation to their original locations.")
     
-    undo_button = st.button("↩️ Undo Last Operation", key="undo_btn")
+    undo_button = st.button("↩Undo Last Operation", key="undo_btn")
     if undo_button:
         try:
             success = undo_last_operation()
             if success:
-                st.success("✅ Files restored successfully!")
+                st.success(" Files restored successfully!")
                 st.balloons()
             else:
-                st.warning("⚠️ Nothing to undo.")
+                st.warning(" Nothing to undo.")
         except Exception as e:
             st.error(f"Error: {str(e)}")
     
@@ -631,11 +631,11 @@ elif st.session_state.current_view == 'schedule':
         st.rerun()
     
     st.markdown("<div class='content-card'>", unsafe_allow_html=True)
-    st.markdown("### ⏰ Schedule Organization")
+    st.markdown("### Schedule Organization")
     
     # Instructions
     st.info("""
-    💡 **How to use:**
+     **How to use:**
     1. Enter folder path and times below
     2. Click 'Save Schedule'
     3. Run `python run_scheduled.py` in terminal
@@ -643,34 +643,34 @@ elif st.session_state.current_view == 'schedule':
     """)
     
     # Configuration
-    sched_folder = st.text_input("📂 Folder to Schedule", placeholder="e.g., D:\\TestFiles")
+    sched_folder = st.text_input(" Folder to Schedule", placeholder="e.g., D:\\TestFiles")
 
     if sched_folder and not os.path.exists(sched_folder):
-        st.warning("⚠️ Path does not exist!")
+        st.warning(" Path does not exist!")
     elif sched_folder and not os.path.isdir(sched_folder):
-        st.warning("⚠️ Not a directory!")
+        st.warning(" Not a directory!")
 
     new_time_str = st.text_input("Enter time (HH:MM format)", "09:00", help="24-hour format like 09:00, 18:30")
 
     col1, col2 = st.columns(2)
     with col1:
-        if st.button("➕ Add Time"):
+        if st.button(" Add Time"):
             try:
                 new_time = datetime.strptime(new_time_str.strip(), "%H:%M").time()
                 formatted_time = new_time.strftime("%H:%M")
                 if formatted_time not in st.session_state.scheduled_times:
                     st.session_state.scheduled_times.append(formatted_time)
                     st.session_state.scheduled_times.sort()
-                    st.success(f"✅ Added {formatted_time}")
+                    st.success(f" Added {formatted_time}")
                 else:
-                    st.warning("⚠️ Time already added!")
+                    st.warning(" Time already added!")
             except ValueError:
-                st.error("❌ Invalid time! Use format like 09:00 or 18:30")
+                st.error(" Invalid time! Use format like 09:00 or 18:30")
 
     with col2:
         if st.button("🗑️ Clear All"):
             st.session_state.scheduled_times = []
-            st.success("✅ Cleared!")
+            st.success(" Cleared!")
 
     # Show scheduled times
     if st.session_state.scheduled_times:
@@ -682,15 +682,15 @@ elif st.session_state.current_view == 'schedule':
         time_to_remove = st.selectbox("Remove a time:", options=st.session_state.scheduled_times)
         if st.button("🗑️ Remove"):
             st.session_state.scheduled_times.remove(time_to_remove)
-            st.success(f"✅ Removed {time_to_remove}")
+            st.success(f"Removed {time_to_remove}")
             st.rerun()
 
     # Save button
-    if st.button("💾 Save Schedule", type="primary"):
+    if st.button("Save Schedule", type="primary"):
         if not sched_folder or not os.path.isdir(sched_folder):
-            st.error("❌ Please enter a valid folder path!")
+            st.error(" Please enter a valid folder path!")
         elif not st.session_state.scheduled_times:
-            st.warning("⚠️ Please add at least one time!")
+            st.warning(" Please add at least one time!")
         else:
             st.session_state.scheduled_job = {
                 "folder": sched_folder, 
@@ -699,19 +699,19 @@ elif st.session_state.current_view == 'schedule':
             with open("scheduled_jobs.json", "w") as f:
                 json.dump(st.session_state.scheduled_job, f, indent=2)
             
-            st.success("✅ Schedule saved successfully!")
+            st.success(" Schedule saved successfully!")
             st.balloons()
             
             # Show next steps
             st.markdown("---")
-            st.markdown("### 🚀 Next Step: Start the Scheduler")
+            st.markdown("###  Next Step: Start the Scheduler")
             st.code("python run_scheduled.py", language="bash")
             st.markdown("Run this command in your terminal to start scheduling!")
     
     # Show current schedule if exists
     if os.path.exists("scheduled_jobs.json"):
         st.markdown("---")
-        st.markdown("### 📋 Current Schedule")
+        st.markdown("### Current Schedule")
         try:
             with open("scheduled_jobs.json", "r") as f:
                 current_schedule = json.load(f)
@@ -730,21 +730,21 @@ elif st.session_state.current_view == 'dashboard':
         st.rerun()
     
     st.markdown("<div class='content-card'>", unsafe_allow_html=True)
-    st.markdown("### 📊 File Intelligence Dashboard")
+    st.markdown("### File Intelligence Dashboard")
 
     folder = st.text_input("Enter folder path to analyze:")
     if folder and os.path.exists(folder):
         df = scan_directory(folder)
-        st.success(f"✅ Analyzed {len(df)} files.")
+        st.success(f"Analyzed {len(df)} files.")
 
         # File Type Distribution
-        st.subheader("📁 File Type Distribution")
+        st.subheader(" File Type Distribution")
         file_type_data = get_file_type_distribution(df)
         fig = px.pie(values=file_type_data.values, names=file_type_data.index, title="File Type Distribution")
         st.plotly_chart(fig, use_container_width=True)
 
         # Folder Size Distribution
-        st.subheader("💾 Folder Size Overview (MB)")
+        st.subheader("Folder Size Overview (MB)")
         folder_sizes = get_folder_size_distribution(df)
         fig2 = px.bar(x=folder_sizes.index[:10], y=folder_sizes.values[:10], title="Top 10 Largest Folders")
         st.plotly_chart(fig2, use_container_width=True)
@@ -752,6 +752,6 @@ elif st.session_state.current_view == 'dashboard':
     st.markdown("</div>", unsafe_allow_html=True)
 
 # Footer
-st.markdown("<div style='text-align:center;margin-top:3rem;color:white;font-size:0.9rem;padding:1rem 0'>Made with ❤️ Infotact Solutions | SmartFileOrganizer v2.1</div>", unsafe_allow_html=True)
+st.markdown("<div style='text-align:center;margin-top:3rem;color:white;font-size:0.9rem;padding:1rem 0'>Made with ❤️ Infotact Solutions | SmartFileOrganizer</div>", unsafe_allow_html=True)
 
 st.markdown("</div>", unsafe_allow_html=True)
